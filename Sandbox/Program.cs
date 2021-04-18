@@ -8,56 +8,62 @@ namespace Sandbox
     {
         private static readonly object ConsoleWriterLock = new object();
 
-        static bool ydlExited = false;
         static void Main(string[] args)
         {
-            var ydlProcess = new Process();
-            ydlProcess.StartInfo.FileName = "youtube-dl.exe";
-            ydlProcess.StartInfo.UseShellExecute = false;
-            ydlProcess.StartInfo.RedirectStandardOutput = true;
-            ydlProcess.StartInfo.RedirectStandardError = true;
-            ydlProcess.EnableRaisingEvents = true;
-            ydlProcess.OutputDataReceived += YdlProcess_OutputDataReceived;
-            ydlProcess.ErrorDataReceived += YdlProcess_ErrorDataReceived;
-
-            Console.WriteLine("Input to pass to yt-dl:");
-            var userInput = Console.ReadLine();
-            ydlProcess.StartInfo.Arguments = userInput;
-
-            ydlProcess.Start();
-            ydlProcess.BeginOutputReadLine();
-            ydlProcess.BeginErrorReadLine();
-
-            while (!ydlProcess.HasExited)
+            while (true)
             {
-                lock (ConsoleWriterLock)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[HOST] Host Process writing");
-                }
-                Thread.Sleep(100);
-            }
+                Console.WriteLine("Input to pass to yt-dl (type \"exit\" to stop):");
+                var userInput = Console.ReadLine();
 
-            Console.ForegroundColor = ConsoleColor.Gray;
-            ydlProcess.Close();
+                if (userInput == "exit")
+                    break;
+
+                var ydlProcess = new Process();
+                var ydlProcessStartInfo = new ProcessStartInfo()
+                {
+                    FileName = "youtube-dl.exe",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    Arguments = userInput
+                };
+
+                ydlProcess.StartInfo = ydlProcessStartInfo;
+                ydlProcess.OutputDataReceived += YdlProcess_OutputDataReceived;
+                ydlProcess.ErrorDataReceived += YdlProcess_ErrorDataReceived;
+
+                ydlProcess.Start();
+                ydlProcess.BeginOutputReadLine();
+                ydlProcess.BeginErrorReadLine();
+
+                while (!ydlProcess.HasExited)
+                {
+                    WriteMessage(ConsoleColor.Gray, "[HOST]", "host process writing");
+                    Thread.Sleep(250);
+                }
+
+                Console.ResetColor();
+                ydlProcess.Close();
+            }
+        }
+
+        private static void WriteMessage(ConsoleColor color, string prefix, string message)
+        {
+            lock (ConsoleWriterLock)
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine($"{prefix} {message}");
+            }
         }
 
         private static void YdlProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            lock (ConsoleWriterLock)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[StdERR]: " + e.Data);
-            }
+            WriteMessage(ConsoleColor.Red, "[StdERR]", e.Data);
         }
 
         private static void YdlProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            lock (ConsoleWriterLock)
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("[StdIN]: " + e.Data);
-            }
+            WriteMessage(ConsoleColor.Green, "[StdOUT]", e.Data);
         }
     }
 }
