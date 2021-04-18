@@ -18,7 +18,7 @@ namespace Sandbox
                 if (userInput == "exit")
                     break;
 
-                var ydlProcess = new Process();
+                var ydl = new Process();
                 var ydlProcessStartInfo = new ProcessStartInfo()
                 {
                     FileName = "youtube-dl.exe",
@@ -28,22 +28,22 @@ namespace Sandbox
                     Arguments = userInput
                 };
 
-                ydlProcess.StartInfo = ydlProcessStartInfo;
-                ydlProcess.OutputDataReceived += YdlProcess_OutputDataReceived;
-                ydlProcess.ErrorDataReceived += YdlProcess_ErrorDataReceived;
+                ydl.StartInfo = ydlProcessStartInfo;
+                ydl.OutputDataReceived += YdlProcess_OutputDataReceived;
+                ydl.ErrorDataReceived += YdlProcess_ErrorDataReceived;
 
-                ydlProcess.Start();
-                ydlProcess.BeginOutputReadLine();
-                ydlProcess.BeginErrorReadLine();
+                ydl.Start();
+                ydl.BeginOutputReadLine();
+                ydl.BeginErrorReadLine();
 
-                while (!ydlProcess.HasExited)
+                while (!ydl.HasExited)
                 {
                     WriteMessage(ConsoleColor.Gray, "[HOST]", "host process writing");
                     Thread.Sleep(250);
                 }
 
                 Console.ResetColor();
-                ydlProcess.Close();
+                ydl.Close();
             }
         }
 
