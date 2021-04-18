@@ -6,6 +6,8 @@ namespace Sandbox
 {
     class Program
     {
+        private static readonly object ConsoleWriterLock = new object();
+
         static bool ydlExited = false;
         static void Main(string[] args)
         {
@@ -13,9 +15,10 @@ namespace Sandbox
             ydlProcess.StartInfo.FileName = "youtube-dl.exe";
             ydlProcess.StartInfo.UseShellExecute = false;
             ydlProcess.StartInfo.RedirectStandardOutput = true;
+            ydlProcess.StartInfo.RedirectStandardError = true;
             ydlProcess.EnableRaisingEvents = true;
             ydlProcess.OutputDataReceived += YdlProcess_OutputDataReceived;
-            ydlProcess.Exited += YdlProcess_Exited;
+            ydlProcess.ErrorDataReceived += YdlProcess_ErrorDataReceived;
 
             Console.WriteLine("Input to pass to yt-dl:");
             var userInput = Console.ReadLine();
@@ -23,24 +26,38 @@ namespace Sandbox
 
             ydlProcess.Start();
             ydlProcess.BeginOutputReadLine();
+            ydlProcess.BeginErrorReadLine();
 
-            while (!ydlExited)
+            while (!ydlProcess.HasExited)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Host Process writing");
-                Thread.Sleep(500);
+                lock (ConsoleWriterLock)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("[HOST] Host Process writing");
+                }
+                Thread.Sleep(100);
             }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            ydlProcess.Close();
         }
 
-        private static void YdlProcess_Exited(object sender, EventArgs e)
+        private static void YdlProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            ydlExited = true;
+            lock (ConsoleWriterLock)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("[StdERR]: " + e.Data);
+            }
         }
 
         private static void YdlProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Console.ResetColor();
-            Console.WriteLine(e.Data);
+            lock (ConsoleWriterLock)
+            {
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("[StdIN]: " + e.Data);
+            }
         }
     }
 }
