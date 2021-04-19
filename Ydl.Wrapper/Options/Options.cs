@@ -4,7 +4,15 @@ namespace Ydl.Wrapper
 {
     public class Options
     {
-        public IList<IYdlOption> options { get; }
+        private readonly HashSet<IYdlOption> options = new HashSet<IYdlOption>();
+
+        public bool TryAddOption(IYdlOption option) => options.Add(option);
+
+        public Options AddOption(IYdlOption option)
+        {
+            options.Add(option);
+            return this;
+        }
 
         public override string ToString()
         {
