@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ydl.Wrapper
+namespace YoutubeDl
 {
     public interface IYdlOutputParser<out TResult>
     {

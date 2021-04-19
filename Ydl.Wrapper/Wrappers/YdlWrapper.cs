@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ydl.Wrapper
+namespace YoutubeDl
 {
     public class YdlWrapper
     {

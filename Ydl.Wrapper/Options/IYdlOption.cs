@@ -1,4 +1,4 @@
-﻿namespace Ydl.Wrapper
+﻿namespace YoutubeDl
 {
     public interface IYdlOption
     {

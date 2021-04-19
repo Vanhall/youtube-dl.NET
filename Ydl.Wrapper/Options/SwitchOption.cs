@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ydl.Wrapper
+﻿namespace YoutubeDl
 {
     public class SwitchOption : OptionBase
     {
-        public SwitchOption(string switchKey)
+        public SwitchOption(string key)
         {
-            this.switchKey = switchKey;
+            this.key = key;
         }
 
-        public override string ToString() => switchKey;
+        public override string ToString() => key;
     }
 }

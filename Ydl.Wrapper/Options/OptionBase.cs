@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ydl.Wrapper
+﻿namespace YoutubeDl
 {
     public abstract class OptionBase : IYdlOption
     {
-        protected string switchKey;
+        protected string key;
 
-        public override int GetHashCode() => switchKey.GetHashCode();
+        public override int GetHashCode() => key.GetHashCode();
 
         public override bool Equals(object obj)
         {
             if (obj is OptionBase other)
-                return switchKey.Equals(other.switchKey);
+                return key.Equals(other.key);
             return false;
         }
     }
