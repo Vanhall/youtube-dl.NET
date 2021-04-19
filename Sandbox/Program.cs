@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
+using YoutubeDl;
 
 namespace Sandbox
 {
@@ -18,32 +18,15 @@ namespace Sandbox
                 if (userInput == "exit")
                     break;
 
-                var ydl = new Process();
-                var ydlProcessStartInfo = new ProcessStartInfo()
+                YdlWrapper<string> testWrapper = new YdlWrapper<string>(new TestParser());
+                testWrapper.Options.IgnoreConfig().Version();
+                var t = testWrapper.ExecuteAsync(userInput);
+                while (!t.IsCompleted)
                 {
-                    FileName = "youtube-dl.exe",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    Arguments = userInput
-                };
-
-                ydl.StartInfo = ydlProcessStartInfo;
-                ydl.OutputDataReceived += YdlProcess_OutputDataReceived;
-                ydl.ErrorDataReceived += YdlProcess_ErrorDataReceived;
-
-                ydl.Start();
-                ydl.BeginOutputReadLine();
-                ydl.BeginErrorReadLine();
-
-                while (!ydl.HasExited)
-                {
-                    WriteMessage(ConsoleColor.Gray, "[HOST]", "host process writing");
+                    WriteMessage(ConsoleColor.Green, "[HOST]", "host process writing");
                     Thread.Sleep(250);
                 }
-
-                Console.ResetColor();
-                ydl.Close();
+                Console.WriteLine(t.Result);
             }
         }
 
@@ -53,17 +36,8 @@ namespace Sandbox
             {
                 Console.ForegroundColor = color;
                 Console.WriteLine($"{prefix} {message}");
+                Console.ResetColor();
             }
-        }
-
-        private static void YdlProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            WriteMessage(ConsoleColor.Red, "[StdERR]", e.Data);
-        }
-
-        private static void YdlProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            WriteMessage(ConsoleColor.Green, "[StdOUT]", e.Data);
         }
     }
 }

@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Youtube-dl.Net\Youtube-dl.Net.csproj" />
+  </ItemGroup>
+
 </Project>

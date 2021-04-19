@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace YoutubeDl
+﻿namespace YoutubeDl
 {
     public interface IYdlOutputParser<out TResult>
     {
-        TResult Parse(string input);
+        void Parse(string input);
+        TResult GetResult();
     }
 }
