@@ -3,6 +3,7 @@ using System.Threading;
 using YoutubeDl;
 using YoutubeDl.ErrorHandlers;
 using YoutubeDl.Options;
+using YoutubeDl.Parsers;
 
 namespace Sandbox
 {

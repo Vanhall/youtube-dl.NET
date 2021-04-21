@@ -1,7 +1,6 @@
 ﻿using System;
-using YoutubeDl.Parsers;
 
-namespace YoutubeDl
+namespace YoutubeDl.Parsers
 {
     public class ConsolePassthroughParser<T> : IYdlOutputParser<T>
     {
