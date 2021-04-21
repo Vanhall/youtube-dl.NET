@@ -1,4 +1,4 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Parsers
 {
     public interface IYdlOutputParser<out TResult>
     {

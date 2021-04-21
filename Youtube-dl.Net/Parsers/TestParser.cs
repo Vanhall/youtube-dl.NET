@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using YoutubeDl.Parsers;
 
 namespace YoutubeDl
 {

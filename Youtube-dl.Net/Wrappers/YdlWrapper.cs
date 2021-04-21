@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using YoutubeDl.Options;
+using YoutubeDl.Parsers;
 
 namespace YoutubeDl
 {
     public class YdlWrapper<TResult>
     {
-        public Options Options { get; }
+        public YdlOptions Options { get; }
 
         private readonly IYdlOutputParser<TResult> parser;
 
@@ -15,7 +17,7 @@ namespace YoutubeDl
         {
             this.ydlExePath = ydlExePath;
             this.parser = parser;
-            Options = new Options();
+            Options = new YdlOptions();
         }
 
         public TResult Execute(string Url = "")
