@@ -1,8 +1,8 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
     public static class FilesystemOptionsExtensions
     {
-        public static Options FilenameTemplate(this Options o, string format) =>
+        public static YdlOptions FilenameTemplate(this YdlOptions o, string format) =>
             o.AddOption(new ParametrizedOption<string>("-o", format));
     }
 }

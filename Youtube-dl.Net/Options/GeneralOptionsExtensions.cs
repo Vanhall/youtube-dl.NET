@@ -1,9 +1,9 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
     public static class GeneralOptionsExtensions
     {
-        public static Options IgnoreConfig(this Options o) => o.AddOption(new SwitchOption("--ignore-config"));
+        public static YdlOptions IgnoreConfig(this YdlOptions o) => o.AddOption(new SwitchOption("--ignore-config"));
 
-        public static Options Version(this Options o) => o.AddOption(new SwitchOption("--version"));
+        public static YdlOptions Version(this YdlOptions o) => o.AddOption(new SwitchOption("--version"));
     }
 }

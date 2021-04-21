@@ -1,6 +1,6 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
-    public abstract class OptionBase : IYdlOption
+    public abstract class YdlOptionBase : IYdlOption
     {
         protected string key;
 
@@ -8,7 +8,7 @@
 
         public override bool Equals(object obj)
         {
-            if (obj is OptionBase other)
+            if (obj is YdlOptionBase other)
                 return key.Equals(other.key);
             return false;
         }

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace YoutubeDl
+namespace YoutubeDl.Options
 {
-    public class Options
+    public class YdlOptions
     {
         private readonly HashSet<IYdlOption> options = new HashSet<IYdlOption>();
 
         public bool TryAddOption(IYdlOption option) => options.Add(option);
 
-        public Options AddOption(IYdlOption option)
+        public YdlOptions AddOption(IYdlOption option)
         {
             options.Add(option);
             return this;

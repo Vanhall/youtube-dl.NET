@@ -1,6 +1,6 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
-    public class SwitchOption : OptionBase
+    public class SwitchOption : YdlOptionBase
     {
         public SwitchOption(string key)
         {

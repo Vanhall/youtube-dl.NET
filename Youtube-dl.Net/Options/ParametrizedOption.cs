@@ -1,6 +1,6 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
-    public class ParametrizedOption<TParam> : OptionBase
+    public class ParametrizedOption<TParam> : YdlOptionBase
     {
         private TParam parameters;
 

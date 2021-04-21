@@ -1,4 +1,4 @@
-﻿namespace YoutubeDl
+﻿namespace YoutubeDl.Options
 {
     public interface IYdlOption
     {
