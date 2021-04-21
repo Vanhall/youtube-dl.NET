@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using YoutubeDl;
+using YoutubeDl.ErrorHandlers;
+using YoutubeDl.Options;
 
 namespace Sandbox
 {
@@ -10,6 +12,12 @@ namespace Sandbox
 
         static void Main(string[] args)
         {
+            YdlWrapper<string> testWrapper = new YdlWrapper<string>(
+                new ConsolePassthroughParser<string>(),
+                new ConsolePassthroughErrorHandler());
+
+            testWrapper.Options.IgnoreConfig();
+
             while (true)
             {
                 Console.WriteLine("Input to pass to yt-dl (type \"exit\" to stop):");
@@ -18,14 +26,21 @@ namespace Sandbox
                 if (userInput == "exit")
                     break;
 
-                YdlWrapper<string> testWrapper = new YdlWrapper<string>(new TestParser());
-                testWrapper.Options.IgnoreConfig().Version();
-                var t = testWrapper.ExecuteAsync(userInput);
+                var cancellationSource = new CancellationTokenSource();
+                var t = testWrapper.Execute(cancellationSource.Token, userInput);
+
                 while (!t.IsCompleted)
                 {
-                    WriteMessage(ConsoleColor.Green, "[HOST]", "host process writing");
+                    WriteMessage(ConsoleColor.Blue, "[HOST]", "host process writing");
                     Thread.Sleep(250);
+                    if (Console.KeyAvailable)
+                    {
+                        cancellationSource.Cancel();
+                        Console.ReadKey();
+                        break;
+                    }
                 }
+
                 Console.WriteLine(t.Result);
             }
         }
