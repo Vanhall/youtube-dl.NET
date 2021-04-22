@@ -28,7 +28,8 @@ namespace YoutubeDl
         public async Task<TResult> Execute(CancellationToken ct, string Url = "", int cancellationCheckDelay = 50) =>
             await Task.Run(() =>
             {
-                if (ct.IsCancellationRequested) return default;
+                if (ct.IsCancellationRequested)
+                    return default;
 
                 var ydl = new Process();
                 var ydlProcessStartInfo = new ProcessStartInfo()
@@ -51,12 +52,9 @@ namespace YoutubeDl
                 if (cancellationCheckDelay <= 0)
                     ydl.WaitForExit();
                 else
-                    while (true)
+                    while (!ydl.HasExited)
                     {
-                        if (ydl.HasExited)
-                            break;
-
-                        if (ct.IsCancellationRequested && !ydl.HasExited)
+                        if (ct.IsCancellationRequested)
                         {
                             ydl.Kill();
                             return default;
