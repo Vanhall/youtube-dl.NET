@@ -1,4 +1,4 @@
-﻿namespace YoutubeDl.Options.Extensions
+﻿namespace YoutubeDl.Options
 {
     public static class AdobePassOptionsExtentions
     {

@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using YoutubeDl.ErrorHandlers;
 using YoutubeDl.Options;
 using YoutubeDl.Parsers;
-using YoutubeDl.ErrorHandlers;
-using System.Threading;
 
 namespace YoutubeDl
 {
@@ -25,47 +25,60 @@ namespace YoutubeDl
             Options = new YdlOptions();
         }
 
-        public async Task<TResult> Execute(CancellationToken ct, string Url = "", int cancellationCheckDelay = 50) =>
-            await Task.Run(() =>
-            {
-                if (ct.IsCancellationRequested)
-                    return default;
+        public TResult Execute(Uri Uri = null)
+        {
+            var ydl = new Process();
+            InitializeYdlProcess(ydl, Uri);
+            ydl.WaitForExit();
+            ydl.Close();
+            return parser.GetResult();
+        }
 
-                var ydl = new Process();
-                var ydlProcessStartInfo = new ProcessStartInfo()
+        public TResult Execute(CancellationToken ct, Uri Uri = null, int cancellationCheckDelay = 100)
+        {
+            if (ct.IsCancellationRequested)
+                return default;
+
+            var ydl = new Process();
+            InitializeYdlProcess(ydl, Uri);
+
+            if (cancellationCheckDelay <= 0)
+                ydl.WaitForExit();
+            else
+                while (!ydl.HasExited)
                 {
-                    FileName = ydlExePath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    Arguments = $"{Options} {Url}"
-                };
-
-                ydl.StartInfo = ydlProcessStartInfo;
-                ydl.OutputDataReceived += Ydl_OutputDataReceived;
-                ydl.ErrorDataReceived += Ydl_ErrorDataReceived;
-
-                ydl.Start();
-                ydl.BeginOutputReadLine();
-                ydl.BeginErrorReadLine();
-
-                if (cancellationCheckDelay <= 0)
-                    ydl.WaitForExit();
-                else
-                    while (!ydl.HasExited)
+                    if (ct.IsCancellationRequested)
                     {
-                        if (ct.IsCancellationRequested)
-                        {
-                            ydl.Kill();
-                            return default;
-                        }
-
-                        Task.Delay(cancellationCheckDelay);
+                        ydl.Kill();
+                        return default;
                     }
 
-                ydl.Close();
-                return parser.GetResult();
-            });
+                    Thread.Sleep(cancellationCheckDelay);
+                }
+
+            ydl.Close();
+            return parser.GetResult();
+        }
+
+        private void InitializeYdlProcess(Process process, Uri Uri)
+        {
+            var ydlProcessStartInfo = new ProcessStartInfo()
+            {
+                FileName = ydlExePath,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                Arguments = Uri == null ? $"{Options}" : $"{Options} {Uri}"
+            };
+
+            process.StartInfo = ydlProcessStartInfo;
+            process.OutputDataReceived += Ydl_OutputDataReceived;
+            process.ErrorDataReceived += Ydl_ErrorDataReceived;
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+        }
 
         private void Ydl_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {

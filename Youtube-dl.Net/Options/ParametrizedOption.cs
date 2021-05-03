@@ -2,7 +2,7 @@
 {
     public class ParametrizedOption<TParam> : YdlOptionBase
     {
-        private TParam parameters;
+        private readonly TParam parameters;
 
         public ParametrizedOption(string key, TParam parameters)
         {
